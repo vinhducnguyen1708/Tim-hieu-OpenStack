@@ -203,7 +203,7 @@ glance image-create --name ubuntu16.04-byvinh-2019 \
     
     - Khi kéo repo `https://github.com/openstack/diskimage-builder` sẽ có các elements có sẵn trong thư mục `elements` Nên ta tạo thêm thư mục ví dụ: `mysqlsetup`
 
-- Bước 2: Trong thư mục `mysqlsetup bao gồm : thư mục `post-install.d/`
+- Bước 2: Trong thư mục `mysqlsetup` bao gồm : thư mục `post-install.d/`
     
     - Trong thư mục `post-install.d/` tạo file với nội dung chạy script 
     
