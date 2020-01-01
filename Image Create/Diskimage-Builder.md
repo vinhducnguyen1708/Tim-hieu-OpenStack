@@ -156,7 +156,7 @@ pip install diskimage-builder
     DIB_RELEASE=xenial disk-image-create -a amd64 -o ubuntu-amd64 -p mysql-server,tmux vm ubuntu
     ``` 
     - Đối với Centos:
-        - Thực hiện cài đặt để sử dụng được lệnh semanage :`sử dụng lệnh  `yum provides /usr/sbin/semanage` để tìm gói cài đặt   `yum install -y policycoreutils-python.x86_64` 
+        - Thực hiện cài đặt để sử dụng được lệnh semanage :sử dụng lệnh  `yum provides /usr/sbin/semanage` để tìm gói cài đặt   `yum install -y policycoreutils-python.x86_64` 
         - Muốn chọn được Cloud image ta thực hiện down image từ trang chủ `https://cloud.centos.org/centos/7/images/` rồi 
          thực hiện lệnh `DIB_LOCAL_IMAGE=/root/CentOS-7-x86_64-GenericCloud.qcow2.xz disk-image-create -a amd64 -o  centos7-basic vm centos7`
 
