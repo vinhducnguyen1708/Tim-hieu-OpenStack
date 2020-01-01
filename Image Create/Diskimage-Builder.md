@@ -76,8 +76,29 @@
     - docker
     -raw
 
-- Ví dụ thực hiện gán một script vào element:
+- **Phase Subdirectories**: Là các thư mục nằm trong 1 elements sẽ chạy các đoạn cấu hình hoặc script để tùy chỉnh các process khi dựng image
+    
+    -  root.d : Tạo hoặc tùy chỉnh nội dung ban đầu cho filesystem, chỉ chọn được duy nhất 1 elements để customise phần này `i386|amd64|armhf|arm64`
 
+    - extra-data.d: Kéo thêm các data như  SSH keys, http proxy settings
+
+    - pre-install.d : Cài đặt apt repo ( nơi lưu trữ các chương trình cài đặt)
+
+    - install.d: Đây là bước thường để cài đặt các package
+
+    - post-install.d: Cấu hình các gói đã được cài trước khi boot.
+
+    - post-root.d
+
+    - block-device.d : Tạo phân vùng
+
+    - pre-finalise.d
+
+    - finalise.d
+
+    - cleanup.d
+
+Tham khảo thêm tại: https://docs.openstack.org/diskimage-builder/latest/developer/developing_elements.html
 <a name="3"></a>
 
 ## 3. Tạo Image bằng DIB
@@ -132,8 +153,13 @@ pip install diskimage-builder
 
     - Nếu muốn cài đặt thêm các package ( Ví dụ cài đặt mysql-server )
     ``` 
-    disk-image-create -a amd64 -o ubuntu-amd64 -p mysql-server,tmux vm ubuntu
+    DIB_RELEASE=xenial disk-image-create -a amd64 -o ubuntu-amd64 -p mysql-server,tmux vm ubuntu
     ``` 
+    - Đối với Centos:
+        - Thực hiện cài đặt để sử dụng được lệnh semanage :`sử dụng lệnh  `yum provides /usr/sbin/semanage` để tìm gói cài đặt   `yum install -y policycoreutils-python.x86_64` 
+        - Muốn chọn được Cloud image ta thực hiện down image từ trang chủ `https://cloud.centos.org/centos/7/images/` rồi 
+         thực hiện lệnh `DIB_LOCAL_IMAGE=/root/CentOS-7-x86_64-GenericCloud.qcow2.xz disk-image-create -a amd64 -o  centos7-basic vm centos7`
+
 - Bước 5: Thực hiện upload lên Openstack:
  
 Sử dụng lệnh:
@@ -153,31 +179,65 @@ glance image-create --name ubuntu16.04-byvinh-2019 \
 
 ![ima](ima/DIB4.png)
 
+- Đối với Centos:
+    - Thực hiện cài đặt để sử dụng được lệnh semanage :
+        - Sử dụng lệnh:  `yum provides /usr/sbin/semanage` để tìm gói cài đặt 
+        ![ima](ima/DIB6.png)
+
+         - Tải gói cài đặt để sử dụng được lệnh semanage
+            ```
+            yum install -y policycoreutils-python-2.5-33.el7.x86_64
+            ```
+    - Muốn chọn được Cloud image ta thực hiện down image từ trang chủ `https://cloud.centos.org/centos/7/images/` 
+        - Rồi thực hiện lệnh tạo image: 
+        ```
+        DIB_LOCAL_IMAGE=/root/CentOS-7-x86_64-GenericCloud.qcow2.xz disk-image-create -a amd64 -o  centos7-basic vm centos7
+        ```
+    - Kiểm tra:
+       ![ima](ima/DIB9.png)
+
 
 <a name="4"></a>
 ## 4. Hướng dẫn cách tạo một elements và tạo image cùng element đó:
 - Bước 1: Tạo thư mục chứa element
-    - `/root/elements-demo/elements/demo/` ( Ví dụ tạo element tên là `demo` )
-- Bước 2: Trong thư mục demo bao gồm : 1 file `element-deps` (để đọc file đầu !#/bin/bash) và thư mục `post-install.d/`
+    
+    - Khi kéo repo `https://github.com/openstack/diskimage-builder` sẽ có các elements có sẵn trong thư mục `elements` Nên ta tạo thêm thư mục ví dụ: `mysqlsetup`
+
+- Bước 2: Trong thư mục `mysqlsetup bao gồm : thư mục `post-install.d/`
     
     - Trong thư mục `post-install.d/` tạo file với nội dung chạy script 
     
-- Bước 3 Tạo file `01-motd` với nội dung
-    ```
-     !#/bin/bash
-    #Khi su dung `cat /etc/motd` se in ra lenh echo
-    DATE=`date +%F`
-    echo " Image was created by Vinh with DIB on {$DATE} >> /etc/motd
-    ```
+- Bước 3: Tạo file `install-setup-mysql`
+ với nội dung script đã viết sẵn :
+ ![ima](ima/DIB5.png)
+
+Thực hiện cấp quyền ```chmod +x install-setup-mysql``` 
+
 - Bước 4: Tạo Path để lấy elements
     ```
-    export ELEMENTS_PATH=/root/elements-demo/elements
+    export ELEMENTS_PATH=/root/diskimage-builder/diskimage_builder/elements/
+
     ```
 - Bước 5: Tạo Image
 
     ```
-    DIB_RELEASE=trusty disk-image-create -a amd64 -o ubuntu-demo ubuntu vm demo
+    DIB_RELEASE=xenial disk-image-create -a amd64 -o ubuntu-1604-app ubuntu vm mysqlsetup
     ```
+
+- Bước 6: Thực hiện upload image lên Openstack
+    ![ima](ima/DIB7.png)
+
+- Kiểm tra vm đã được tạo :
+   ![ima](ima/DIB8.png)
+
+<a name="5"></a>
+## 5. Một số các Options khác:
+
+### 5.1 Chỉnh sửa kernel : 
+ - extracts the kernel of the built image.
+ - `DIB_BAREMETAL_KERNEL_PATTERN=`
+ 
+
 
 
 
