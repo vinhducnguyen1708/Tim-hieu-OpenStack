@@ -51,7 +51,7 @@
 
 ### 1.3 So sánh với các tools khác 
 
-![ima](ima/DIB.png)
+![ima](../ima/DIB.png)
 (https://www.virtualization.net/creating-custom-elements-for-diskimage-builder-9798/)
 
 <a name="2"></a>
@@ -174,16 +174,16 @@ glance image-create --name ubuntu16.04-byvinh-2019 \
 --progress
 
 ```
-![ima](ima/DIB3.png)
+![ima](../ima/DIB3.png)
 
 - Kiểm tra image có sử dụng được không:
 
-![ima](ima/DIB4.png)
+![ima](../ima/DIB4.png)
 
 - **Đối với tạo image Centos:**
     - Thực hiện cài đặt để sử dụng được lệnh semanage :
         - Sử dụng lệnh:  `yum provides /usr/sbin/semanage` để tìm gói cài đặt 
-        ![ima](ima/DIB6.png)
+        ![ima](../ima/DIB6.png)
 
          - Tải gói cài đặt để sử dụng được lệnh semanage
             ```
@@ -195,7 +195,7 @@ glance image-create --name ubuntu16.04-byvinh-2019 \
         DIB_LOCAL_IMAGE=/root/CentOS-7-x86_64-GenericCloud.qcow2.xz disk-image-create -a amd64 -o  centos7-basic vm centos7
         ```
     - Kiểm tra:
-       ![ima](ima/DIB9.png)
+       ![ima](../ima/DIB9.png)
 
 
 <a name="4"></a>
@@ -249,10 +249,10 @@ glance image-create --name ubuntu16.04-byvinh-2019 \
     ```
 
 - Bước 6: Thực hiện upload image lên Openstack
-    ![ima](ima/DIB7.png)
+    ![ima](../ima/DIB7.png)
 
 - Kiểm tra vm đã được tạo :
-   ![ima](ima/DIB8.png)
+   ![ima](../ima/DIB8.png)
 
 <a name="5"></a>
 ## 5. Một số các Options khác:
