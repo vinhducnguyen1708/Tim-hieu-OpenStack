@@ -33,14 +33,4 @@ rsync -av wordpress/* /var/www/html/
 chown -R www-data:www-data /var/www/html/
 chmod -R 755 /var/www/html/
 
-cat <<EOF > /var/setupapp.sh
-#!/bin/bash
-Q3="CREATE DATABASE wordpressdb;"
-Q4="GRANT ALL PRIVILEGES ON wordpressdb.* TO 'wordpressuser'@'localhost' IDENTIFIED BY '12345';"
-Q5="FLUSH PRIVILEGES;"
-SQLW="${Q3}${Q4}${Q5}"
-mysql -uroot -p123 -e "$SQLW"
-service mysql restart
-EOF
-chmod +x /var/setupapp.sh
 

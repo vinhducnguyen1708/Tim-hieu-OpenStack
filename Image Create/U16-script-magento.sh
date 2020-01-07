@@ -75,3 +75,18 @@ sudo systemctl restart apache2.service
 # Create directoty to run script after boot VM
 echo "$(tput setaf 2)##### Create directoty to run script after boot Vm #####$(tput sgr0)"
 
+touch /var/setup_app.sh
+cat  <<EOF > /var/setup_app.sh
+#!/bin/bash
+echo "$(tput setaf 2)##### InstallMysql-magento #####$(tput sgr0)"
+sleep 3
+MYSQL=`which mysql`
+Q1="CREATE DATABASE magentodb;"
+Q2="CREATE USER 'magentouser'@'localhost' IDENTIFIED BY '12345';"
+Q3="GRANT ALL ON magentodb.* TO 'magentouser'@'localhost' IDENTIFIED BY '12345' WITH GRANT OPTION;"
+Q4="FLUSH PRIVILEGES;"
+SQL="${Q1}${Q2}${Q3}${Q4}"
+mysql -uroot -p123 -e "$SQL"
+service mysql restart
+EOF
+chmod +x /var/setup_app.sh
