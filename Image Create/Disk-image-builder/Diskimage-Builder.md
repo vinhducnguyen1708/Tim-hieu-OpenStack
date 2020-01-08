@@ -51,7 +51,7 @@
 
 ### 1.3 So sánh với các tools khác 
 
-![ima](ima/DIB.png)
+![ima](../ima/DIB.png)
 (https://www.virtualization.net/creating-custom-elements-for-diskimage-builder-9798/)
 
 <a name="2"></a>
@@ -86,9 +86,9 @@
 
     - install.d: Đây là bước thường để cài đặt các package
 
-    - post-install.d: Cấu hình các gói đã được cài trước khi boot.
+    - post-install.d: Cấu hình các gói đã được cài .
 
-    - post-root.d
+    - post-root.d: 
 
     - block-device.d : Tạo phân vùng
 
@@ -140,9 +140,9 @@ sudo pip install -r requirements.txt
 pip install diskimage-builder
 ```
 
-- Bước 4: Thực hiện tạo Image:
+- Bước 4: Thực hiện tạo Image :
 
-    - Ở đây tôi thực hiện tạo Image Ubuntu 16.04, amd64, tên Ubuntu-1604:
+    - **Đối với tạo Image Ubuntu 16.04** : amd64, tên Ubuntu-1604:
     ```
      DIB_RELEASE=xenial disk-image-create -a amd64 -o  ubuntu-1604 vm ubuntu
     ```
@@ -153,10 +153,11 @@ pip install diskimage-builder
 
     - Nếu muốn cài đặt thêm các package ( Ví dụ cài đặt mysql-server )
     ``` 
-    DIB_RELEASE=xenial disk-image-create -a amd64 -o ubuntu-amd64 -p mysql-server,tmux vm ubuntu
+    DIB_RELEASE=xenial disk-image-create -a amd64 -o ubuntu-amd64 -p mysql-server,tmux,openssh-server vm ubuntu
     ``` 
     - Đối với Centos:
         - Thực hiện cài đặt để sử dụng được lệnh semanage :sử dụng lệnh  `yum provides /usr/sbin/semanage` để tìm gói cài đặt   `yum install -y policycoreutils-python.x86_64` 
+
         - Muốn chọn được Cloud image ta thực hiện down image từ trang chủ `https://cloud.centos.org/centos/7/images/` rồi 
          thực hiện lệnh `DIB_LOCAL_IMAGE=/root/CentOS-7-x86_64-GenericCloud.qcow2.xz disk-image-create -a amd64 -o  centos7-basic vm centos7`
 
@@ -173,16 +174,16 @@ glance image-create --name ubuntu16.04-byvinh-2019 \
 --progress
 
 ```
-![ima](ima/DIB3.png)
+![ima](../ima/DIB3.png)
 
 - Kiểm tra image có sử dụng được không:
 
-![ima](ima/DIB4.png)
+![ima](../ima/DIB4.png)
 
-- Đối với Centos:
+- **Đối với tạo image Centos:**
     - Thực hiện cài đặt để sử dụng được lệnh semanage :
         - Sử dụng lệnh:  `yum provides /usr/sbin/semanage` để tìm gói cài đặt 
-        ![ima](ima/DIB6.png)
+        ![ima](../ima/DIB6.png)
 
          - Tải gói cài đặt để sử dụng được lệnh semanage
             ```
@@ -194,7 +195,7 @@ glance image-create --name ubuntu16.04-byvinh-2019 \
         DIB_LOCAL_IMAGE=/root/CentOS-7-x86_64-GenericCloud.qcow2.xz disk-image-create -a amd64 -o  centos7-basic vm centos7
         ```
     - Kiểm tra:
-       ![ima](ima/DIB9.png)
+       ![ima](../ima/DIB9.png)
 
 
 <a name="4"></a>
@@ -207,11 +208,34 @@ glance image-create --name ubuntu16.04-byvinh-2019 \
     
     - Trong thư mục `post-install.d/` tạo file với nội dung chạy script 
     
-- Bước 3: Tạo file `install-setup-mysql`
+- Bước 3:
+    -  Tạo file `install-setup-mysql` trong thư mục `post-install.d/`
  với nội dung script đã viết sẵn :
- ![ima](ima/DIB5.png)
+    ```
 
-Thực hiện cấp quyền ```chmod +x install-setup-mysql``` 
+     #!/usr/bin/env bash
+    sudo apt-get update
+    apt-get install -qq   $mysql-server
+        # Install MySQL without password prompt
+        # Set username and password to 'root'
+    sudo debconf-set-selections <<< "mysql-server mysql-server/root_password password 123"
+    sudo debconf-set-selections <<< "mysql-server mysql-server/root_password_again password 123"
+
+        # Install MySQL Server
+        # -qq implies -y --force-yes
+    apt-get install -qq   mysql-server
+        # Make MySQL connectable from outside world without SSH tunnel
+    sed -i "s/bind-address.*/bind-address = 0.0.0.0/" /etc/mysql/mysql.conf.d/mysqld.cnf
+    
+        # adding grant privileges to mysql root user from everywhere
+    MYSQL=`which mysql`
+    Q1="GRANT ALL ON *.* TO 'root'@'%' IDENTIFIED BY '123' WITH GRANT OPTION;"
+    Q2="FLUSH PRIVILEGES;"
+    SQLA="${Q1}${Q2}"
+    $MYSQL -uroot -p123 -e "$SQLA"
+
+    ```
+    
 
 - Bước 4: Tạo Path để lấy elements
     ```
@@ -225,18 +249,31 @@ Thực hiện cấp quyền ```chmod +x install-setup-mysql```
     ```
 
 - Bước 6: Thực hiện upload image lên Openstack
-    ![ima](ima/DIB7.png)
+    ![ima](../ima/DIB7.png)
 
 - Kiểm tra vm đã được tạo :
-   ![ima](ima/DIB8.png)
+   ![ima](../ima/DIB8.png)
 
 <a name="5"></a>
 ## 5. Một số các Options khác:
 
 ### 5.1 Chỉnh sửa kernel : 
  - extracts the kernel of the built image.
- - `DIB_BAREMETAL_KERNEL_PATTERN=`
- 
+    
+    - `DIB_BAREMETAL_KERNEL_PATTERN=`
+
+ - Sử dụng element  `devuser` để thêm user mặc định cho image
+    
+    -   ```
+        export DIB_DEV_USER_USERNAME=vinhdn178
+        export DIB_DEV_USER_SHELL=/bin/bash
+        export DIB_DEV_USER_PWDLESS_SUDO=yes
+        export DIB_DEV_USER_AUTHORIZED_KEYS=$HOME/.ssh/id_rsa.pub 
+        export DIB_DEV_USER_PASSWORD=12345
+        ```
+    
+
+     
 
 
 
