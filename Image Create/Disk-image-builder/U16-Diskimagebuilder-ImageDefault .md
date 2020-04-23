@@ -1,7 +1,7 @@
  ## Đóng gói image Ubuntu16 chứa ứng dụng Apache,Nginx
 
 
-*Môi trường*: Cài đặt phần mềm diskimage-builder và các tool xử lý image như trong tài liệu [tại đây](https://github.com/vinhducnguyen1708/Tim-hieu-OpenStack/blob/master/Image%20Create/Diskimage-Builder.md).
+*Môi trường*: Cài đặt phần mềm diskimage-builder và các tool xử lý image như trong tài liệu [tại đây](https://github.com/vinhducnguyen1708/Tim-hieu-OpenStack/blob/master/Image%20Create/Disk-image-builder/Diskimage-Builder.md#3).
 
 ## 1. Image Default
 
