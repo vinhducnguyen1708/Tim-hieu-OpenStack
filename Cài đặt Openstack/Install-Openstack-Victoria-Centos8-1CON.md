@@ -15,6 +15,7 @@
     - [3.10 Cài đặt thành phần Nova ](#3.10)
     - [3.11 Cài đặt thành phần Neutron](#3.11)
     - [3.12 Cài đặt thành phần Horizon](#3.12)
+    - [3.13 Cài đặt thành phần Cinder](#3.13)
 - [4. Kiểm tra sau khi cài đặt](#4)
 
 
@@ -1379,6 +1380,7 @@ CACHES = {
          'LOCATION': ['192.168.10.93']
         }
 }
+POLICY_FILES_PATH = '/etc/openstack-dashboard'
 
 EOF
 
@@ -1398,6 +1400,166 @@ chown root:apache /etc/openstack-dashboard/local_settings
 systemctl restart httpd memcached
 ```
 
+## 3.13 Cài đặt thành phần Cinder <a name = '3.13'></a>
+
+*Thực hiện dùng luôn node controller làm cinder volume, ở đây tôi gắn thêm vào controller một disk là `vdb`*
+
+- Tạo Database và user cho Cinder
+```sh
+cat << EOF | mysql -pWelcome123
+CREATE DATABASE cinder;
+GRANT ALL PRIVILEGES ON cinder.* TO 'cinder'@'localhost' IDENTIFIED BY 'Welcome123';
+GRANT ALL PRIVILEGES ON cinder.* TO 'cinder'@'%' IDENTIFIED BY 'Welcome123';
+EOF
+```
+
+- Tạo dịch vụ, user cho Cinder
+```sh
+source /root/admin-openrc
+
+openstack user create --domain default --password Welcome123 cinder
+openstack role add --project service --user cinder admin
+openstack service create --name cinderv2 --description "OpenStack Block Storage" volumev2
+openstack service create --name cinderv3 --description "OpenStack Block Storage" volumev3
+openstack endpoint create --region Hanoi volumev2 public http://192.168.10.93:8776/v2/%\(project_id\)s
+openstack endpoint create --region Hanoi volumev2 internal http://192.168.10.93:8776/v2/%\(project_id\)s
+openstack endpoint create --region Hanoi volumev2 admin http://192.168.10.93:8776/v2/%\(project_id\)s
+openstack endpoint create --region Hanoi volumev3 public http://192.168.10.93:8776/v3/%\(project_id\)s
+openstack endpoint create --region Hanoi volumev3 internal http://192.168.10.93:8776/v3/%\(project_id\)s
+openstack endpoint create --region Hanoi volumev3 admin http://192.168.10.93:8776/v3/%\(project_id\)s
+```
+
+- Cài đặt Cinder
+```sh
+yum install openstack-cinder lvm2 device-mapper-persistent-data targetcli python-keystone -y
+```
+
+- Cấu hình Cinder
+```sh
+cinderapifile=/etc/cinder/cinder.conf
+cinderapifilebak=/etc/cinder/cinder.conf.bak
+cp $cinderapifile $cinderapifilebak
+
+cat << EOF > /etc/cinder/cinder.conf
+[DEFAULT]
+my_ip = 192.168.10.93
+host = controller
+use_forwarded_for = true
+osapi_volume_listen = 192.168.10.93
+osapi_volume_listen_port = 8776
+glance_api_servers = http://192.168.10.93:9292
+glance_api_version = 2
+transport_url = rabbit://openstack:Welcome123@192.168.10.93:5672
+log_dir = /var/log/cinder
+state_path = /var/lib/cinder
+auth_strategy = keystone
+volume_name_template = volume-%s
+api_paste_config = /etc/cinder/api-paste.ini
+rootwrap_config = /etc/cinder/rootwrap.conf
+allowed_direct_url_schemes = cinder
+glance_api_insecure = False
+glance_ca_certificates_file = /etc/ssl/private/haproxy.pem
+enabled_backends = lvm
+
+
+[lvm]
+iscsi_ip_address = 192.168.10.93
+volumes_dir = /var/lib/cinder/volumes
+volume_driver = cinder.volume.drivers.lvm.LVMVolumeDriver
+volume_group = cinder-volumes
+volume_backend_name = lvm
+target_helper = lioadm
+target_protocol = iscsi
+
+[backend]
+[backend_defaults]
+[brcd_fabric_example]
+[cisco_fabric_example]
+[coordination]
+[cors]
+
+[database]
+connection = mysql+pymysql://cinder:Welcome123@192.168.10.93/cinder
+
+[fc-zone-manager]
+[healthcheck]
+
+[keystone_authtoken]
+www_authenticate_uri = http://192.168.10.93:5000
+auth_url = http://192.168.10.93:5000
+memcached_servers = 192.168.10.93:11211
+auth_type = password
+project_domain_id = default
+user_domain_id = default
+project_name = service
+username = cinder
+password = Welcom123
+region_name = Hanoi
+[matchmaker_redis]
+
+[nova]
+interface = internal
+auth_url = http://192.168.10.93:5000
+auth_type = password
+project_domain_name = default
+user_domain_name = default
+region_name = Hanoi
+project_name = service
+username = nova
+password = Welcome123
+
+[oslo_concurrency]
+lock_path = /var/lib/cinder/tmp
+
+[oslo_messaging_amqp]
+[oslo_messaging_kafka]
+
+[oslo_messaging_notifications]
+transport_url = rabbit://openstack:Welcome123@192.168.10.93:5672
+[oslo_messaging_rabbit]
+[oslo_messaging_zmq]
+[oslo_middleware]
+[oslo_policy]
+[barbican]
+[oslo_reports]
+[oslo_versionedobjects]
+[profiler]
+[service_user]
+[ssl]
+[vault]
+EOF
+```
+
+- Đồng bộ Database Cinder
+```sh
+su -s /bin/sh -c "cinder-manage db sync" cinder
+```
+- Cấu hình LVM
+```sh
+pvcreate /dev/vdb
+
+vgcreate cinder-volumes /dev/vdb
+
+string="filter = [ \"a/vdb/\", \"r/.*/\"]"
+
+lvmfile=/etc/lvm/lvm.conf
+
+sed -i 's|# Accept every block device:|'"$string"'|g' $lvmfile
+```
+
+- Khởi động lại các service Cinder
+```sh
+systemctl enable openstack-cinder-api.service openstack-cinder-scheduler.service openstack-cinder-volume.service
+systemctl restart openstack-cinder-api.service openstack-cinder-scheduler.service openstack-cinder-volume.service
+```
+
+- Tạo volume type
+```sh
+source /root/admin-openrc
+openstack volume type create lvm
+openstack volume type set lvm --property volume_backend_name=lvm
+```
+
 
 ## 4. Kiểm tra hệ thống sau khi cài đặt <a name = '4'></a>
 
@@ -1408,6 +1570,7 @@ source /root/admin-openrc
 
 su -s /bin/sh -c "nova-manage cell_v2 discover_hosts --verbose" nova
 ```
+
 
 
 ### 4.2 Truy cập Openstack-dashboard <a name = '4.2'></a>
