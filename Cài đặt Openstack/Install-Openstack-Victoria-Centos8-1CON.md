@@ -14,8 +14,9 @@
     - [3.9 Cài đặt thành phần Placement](#3.9)
     - [3.10 Cài đặt thành phần Nova ](#3.10)
     - [3.11 Cài đặt thành phần Neutron](#3.11)
-    - [3.12 Cài đặt thành phần Horizon](#3.12)
-    - [3.13 Cài đặt thành phần Cinder](#3.13)
+    - [3.12 Cấu hình Network](#3.12)
+    - [3.13 Cài đặt thành phần Horizon](#3.13)
+    - [3.14 Cài đặt thành phần Cinder](#3.14)
 - [4. Kiểm tra sau khi cài đặt](#4)
 
 
@@ -1400,7 +1401,7 @@ chown root:apache /etc/openstack-dashboard/local_settings
 systemctl restart httpd memcached
 ```
 
-## 3.13 Cài đặt thành phần Cinder <a name = '3.13'></a>
+## 3.14 Cài đặt thành phần Cinder <a name = '3.14'></a>
 
 *Thực hiện dùng luôn node controller làm cinder volume, ở đây tôi gắn thêm vào controller một disk là `vdb`*
 
