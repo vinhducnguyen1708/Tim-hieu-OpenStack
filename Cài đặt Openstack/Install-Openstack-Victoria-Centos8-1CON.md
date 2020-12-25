@@ -745,6 +745,17 @@ transport_url = rabbit://openstack:Welcome123@192.168.10.93:5672/
 [api]
 auth_strategy = keystone
 
+[cinder]
+os_region_name = Hanoi
+catalog_info = volumev3:cinderv3:internalURL
+auth_url = http://192.168.10.93:5000/
+auth_type = password
+project_domain_name = default
+user_domain_id = default
+project_name = service
+username = cinder
+password = Welcome123
+
 # Glance connection info
 [glance]
 api_servers = http://192.168.10.93:9292
@@ -865,6 +876,15 @@ auth_strategy = keystone
 [barbican]
 [cache]
 [cinder]
+os_region_name = Hanoi
+catalog_info = volumev3:cinderv3:internalURL
+auth_url = http://192.168.10.93:5000/
+auth_type = password
+project_domain_name = default
+user_domain_id = default
+project_name = service
+username = cinder
+password = Welcome123
 [compute]
 [conductor]
 [console]
