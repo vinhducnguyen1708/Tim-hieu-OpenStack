@@ -61,7 +61,7 @@ sudo dnf -y update
 - Cài đặt gói bổ trợ:
 ```sh
 dnf -y install epel-release
-dnf -y update
+dnf -y --enablerepo=epel update
 ```
 
 - Cài đặt các tools cần thiết:
