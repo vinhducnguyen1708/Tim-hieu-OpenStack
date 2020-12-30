@@ -195,7 +195,7 @@ MS Name/IP address         Stratum Poll Reach LastRx Last sample
 
 - Cài đặt gói để cài Openstack Victoria
 ```sh
-dnf config-manager --enable PowerTools
+dnf config-manager --enable powertools
 
 dnf install -y centos-release-openstack-victoria
 
@@ -206,7 +206,7 @@ dnf --enablerepo=centos-openstack-victoria -y upgrade
 
 - Cài đặt Openstack Selinux
 ```sh
-dnf --enablerepo=centos-openstack-victoria,epel,PowerTools -y install openstack-selinux
+dnf --enablerepo=centos-openstack-victoria,epel,powertools -y install openstack-selinux
 ```
 
 ### 3.4 Cài đặt SQL Database <a name = '3.4'></a>
@@ -254,7 +254,7 @@ Ta sẽ để mật khẩu là `Welcome123`
 
 - Cài đặt gói:
 ```sh
-dnf --enablerepo=PowerTools -y install rabbitmq-server 
+dnf --enablerepo=powertools -y install rabbitmq-server 
 ```
 
 - Khởi động dịch vụ RabbitMQ
@@ -279,7 +279,7 @@ rabbitmqctl set_permissions openstack ".*" ".*" ".*"
 
 - Cài đặt gói:
 ```sh
-dnf --enablerepo=PowerTools -y install memcached
+dnf --enablerepo=powertools -y install memcached
 ```
 
 - Cấu hình
@@ -309,7 +309,7 @@ EOF
 
 - Cài đặt Keystone
 ```sh
-dnf --enablerepo=centos-openstack-victoria,epel,PowerTools -y install openstack-keystone python3-openstackclient httpd mod_ssl python3-mod_wsgi python3-oauth2client
+dnf --enablerepo=centos-openstack-victoria,epel,powertools -y install openstack-keystone python3-openstackclient httpd mod_ssl python3-mod_wsgi python3-oauth2client
 ```
 - Sao lưu lại file cấu hình
 
@@ -502,7 +502,7 @@ openstack endpoint create --region Hanoi image admin http://192.168.10.93:9292
 
 - Cài đặt gói glance
 ```sh
-dnf --enablerepo=centos-openstack-victoria,PowerTools,epel -y install openstack-glance
+dnf --enablerepo=centos-openstack-victoria,powertools,epel -y install openstack-glance
 ```
 
 - Sao lưu file cấu hình gốc
@@ -614,7 +614,7 @@ openstack endpoint create --region Hanoi placement admin http://192.168.10.93:87
 
 - Cài đặt gói placement
 ```sh
- dnf --enablerepo=centos-openstack-victoria,PowerTools,epel -y install openstack-placement-api
+ dnf --enablerepo=centos-openstack-victoria,powertools,epel -y install openstack-placement-api
 ```
 - Sao lưu file cấu hình gốc
 ```sh
@@ -720,7 +720,7 @@ openstack endpoint create --region Hanoi compute admin http://192.168.10.93:8774
 
 - Cài đặt gói
 ```sh
-dnf --enablerepo=centos-openstack-victoria,PowerTools,epel -y install openstack-nova 
+dnf --enablerepo=centos-openstack-victoria,powertools,epel -y install openstack-nova 
 ```
 
 - Sao lưu file cấu hình gốc
@@ -851,7 +851,7 @@ systemctl enable openstack-nova-api.service openstack-nova-scheduler.service ope
 
 - Cài đặt gói Nova compute
 ```sh
-dnf --enablerepo=centos-openstack-victoria,PowerTools,epel -y install openstack-nova-compute libvirt-client
+dnf --enablerepo=centos-openstack-victoria,powertools,epel -y install openstack-nova-compute libvirt-client
 ```
 
 - Sao lưu file cấu hình gốc
@@ -1015,7 +1015,7 @@ EOF
 
 - Cài đặt gói Neutron
 ```sh
-dnf --enablerepo=centos-openstack-victoria,PowerTools,epel -y install openstack-neutron openstack-neutron-ml2 openstack-neutron-openvswitch ebtables libibverbs
+dnf --enablerepo=centos-openstack-victoria,powertools,epel -y install openstack-neutron openstack-neutron-ml2 openstack-neutron-openvswitch ebtables libibverbs
 ```
 
 - Sao lưu file cấu hình gốc
@@ -1193,7 +1193,7 @@ su -s /bin/sh -c "neutron-db-manage --config-file /etc/neutron/neutron.conf --co
 
 - Cài đặt gói
 ```sh
-dnf --enablerepo=centos-openstack-victoria,PowerTools,epel -y install openstack-neutron-openvswitch ebtables ipset
+dnf --enablerepo=centos-openstack-victoria,powertools,epel -y install openstack-neutron-openvswitch ebtables ipset
 ```
 
 - Cấu hình Neutron
@@ -1364,7 +1364,7 @@ systemctl restart network
 
 - Cài đặt gói Openstack-dashboard
 ```sh
-dnf --enablerepo=centos-openstack-victoria,PowerTools,epel -y install openstack-dashboard
+dnf --enablerepo=centos-openstack-victoria,powertools,epel -y install openstack-dashboard
 ```
 
 - Sao lưu file cấu hình gốc 
