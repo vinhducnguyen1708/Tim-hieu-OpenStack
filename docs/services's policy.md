@@ -4,6 +4,9 @@
 
 Mỗi một dịch vụ Openstack như Keystone, Nova, Neutron,... đều có chính sách RBAC riêng. Cơ chế này quyết định user nào có thể truy cập các đối tượng trong mỗi service. và việc xác định đó được thông qua file policy.json của mỗi service.
 
+![ima](../images/policyfile.png)
+
+
 Khi gọi API vào mỗi service được thiết lập, các policy engine của các service sử dụng các định nghĩa policy phù hợp để quyết định lời yêu cầu này được chấp nhận. Bất kỳ thay đổi nào ở file policy.json đều được xác nhận ngay lập tức, điều này cho phép các policy mới sẽ được thực hiện ngay cả khi service đang chạy.
 
 File policy.json là file có dạng cấu trúc JSON (Javascript Object Notation). Mỗi policy được định nghĩa bằng 1 dòng khai báo.
