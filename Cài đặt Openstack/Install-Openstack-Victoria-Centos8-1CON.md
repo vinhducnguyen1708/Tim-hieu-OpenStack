@@ -199,8 +199,6 @@ dnf config-manager --enable powertools
 
 dnf install -y centos-release-openstack-victoria
 
-sed -i -e "s/enabled=1/enabled=0/g" /etc/yum.repos.d/CentOS-OpenStack-victoria.repo
-
 dnf --enablerepo=centos-openstack-victoria -y upgrade
 ```
 
@@ -1452,7 +1450,7 @@ openstack endpoint create --region Hanoi volumev3 admin http://192.168.10.93:877
 
 - Cài đặt Cinder
 ```sh
-yum install openstack-cinder lvm2 device-mapper-persistent-data targetcli python-keystone -y
+yum install openstack-cinder lvm2 device-mapper-persistent-data targetcli python3-keystone -y
 ```
 
 - Cấu hình Cinder
@@ -1514,7 +1512,7 @@ project_domain_id = default
 user_domain_id = default
 project_name = service
 username = cinder
-password = Welcom123
+password = Welcome123
 region_name = Hanoi
 [matchmaker_redis]
 
