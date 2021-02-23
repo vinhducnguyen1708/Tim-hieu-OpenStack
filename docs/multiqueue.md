@@ -3,7 +3,7 @@
 
 *Môi trường Openstack Ussuri*
 
-## Vì sao nên sử dụng Multiqueue
+## I. Vì sao nên sử dụng Multiqueue
 
 - Khi nhiều đơn vị yêu cầu tài nguyên máy ảo trên Openstack lớn, nhưng ứng dụng chạy trên các máy ảo vẫn không đạt được hiệu năng tốt.
 
@@ -13,7 +13,7 @@
 
 - Có thể việc sử dụng multiqueue có thể ảnh hưởng đến latency của ứng dụng chạy trên VMs nên cần test performance
 
-## Để bật tính năng này có 2 cách:
+## II. Để bật tính năng này có 2 cách:
 
 - Set trong flavor:
 
@@ -28,7 +28,7 @@ openstack image set --property hw_vif_multiqueue_enabled='true'  <id_image>
 ```
 
 
-## Kiểm tra VMs
+## III. Kiểm tra VMs
 
 - VM khi chưa phân luồng Queue:
 
@@ -38,6 +38,86 @@ openstack image set --property hw_vif_multiqueue_enabled='true'  <id_image>
 
 ![ima](../images/multiqueue2.png)
 
-## Kiểm tra hiệu năng
+## IV. Kiểm tra hiệu năng
+
+### Non-multiqueue
+
+1. Yêu cầu:
+- Số lượng VM: 5
+- Hệ điều hành: Ubuntu20.04
+- Thông số: 4 vCPU, 4GB RAM
+- Network: private network 192.168.1.0/24
+- Phần mềm test: iperf3, nload :
+```sh
+apt-get -y install iperf3 nload
+```
+2. Cách thức thực hiện
+- Chọn 1 server (incoming) được tạo trên node compute khác với 4 server còn lại. Tạo 4 phiên ssh, trên mỗi phiên SSH chạy 1 tiến trình iperf3 để listen trên 1 port ví dụ :
+```sh
+iperf3 -s -f m -p 3000
+```
+![ima](../images/multiqueuetest1.png)
+
+- 4 server(outgoing) còn lại sẽ đẩy vào 4 port tương ứng ở server 1
+ví dụ:
+```sh
+iperf3 -c 192.168.1.165 -f m -t 600 -p 3000
+```
+![ima](../images/multiqueuetest2.png)
+
+- Kết quả các server đẩy vào:
+
+` inh-u20-non-multiqueue-2:`
+
+![ima](../images/multiqueuetest4.png)
+
+`vinh-u20-non-multiqueue-3:`
+
+![ima](../images/multiqueuetest5.png)
+
+`vinh-u20-non-multiqueue-4:`
+
+![ima](../images/multiqueuetest6.png)
+
+`vinh-u20-non-multiqueue-5:`
+
+![ima](../images/multiqueuetest7.png)
+
+- Kết quả nload trên `vinh-u20-non-multiqueue-1`:
+
+![ima](../images/multiqueuetest3.png)
 
 
+### Multiqueue
+
+Yêu cầu và các thực hiện giống như trên
+
+- Kết quả các server đẩy vào:
+
+`vinh-u20-multiqueue-2:`
+
+![ima](../images/multiqueuetest8.png)
+
+`vinh-u20-multiqueue-3:`
+
+![ima](../images/multiqueuetest9.png)
+
+`vinh-u20-multiqueue-4:`
+
+![ima](../images/multiqueuetest10.png)
+
+`vinh-u20-multiqueue-5:`
+
+![ima](../images/multiqueuetest11.png)
+
+- Kết quả nload trên `vinh-u20-multiqueue-1`:
+
+![ima](../images/multiqueuetest12.png)
+
+
+## Kết luận
+- Có thể dễ dàng nhận thấy khi sử dụng multiqueue tốc độ xử lý trên các NICs tăng đáng kể!
+
+- Nhưng khi sử dụng multiqueue đôi khi sẽ xảy ra hiện tượng các gói tin phải gửi lại:
+
+![ima](../images/multiqueuetest13.png)
