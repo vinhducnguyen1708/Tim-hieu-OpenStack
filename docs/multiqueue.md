@@ -120,4 +120,16 @@ Yêu cầu và các thực hiện giống như trên
 
 - Nhưng khi sử dụng multiqueue đôi khi sẽ xảy ra hiện tượng các gói tin phải gửi lại:
 
+`Retransmitted TCP packets`
+
 ![ima](../images/multiqueuetest13.png)
+
+
+---
+## Tham khảo: 
+
+[1] https://www.slideshare.net/vietstack/meetup-23-01-the-things-i-wish-i-would-have-known-before-doing-openstack-cloud-transformation
+
+[2] https://blog.cloudflare.com/how-to-receive-a-million-packets/
+
+[3] https://www.tecmint.com/test-network-throughput-in-linux/
