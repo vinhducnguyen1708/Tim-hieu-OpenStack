@@ -53,7 +53,7 @@ openstack flavor set FLAVOR_ID --property trait:HW_CPU_X86_AVX=required \
 ```
 
 ## How Do I Know?
-Vậy làm thế nào để kiểm tra nên sử dụng mode nào hoặc ở dây cụ thể hơn là khi sử dụng mode `custom` ta nên chọn model nào để các VMs sẽ xử dụng dòng CPU tương thích với các host compute
+Vậy làm thế nào để kiểm tra nên sử dụng mode nào hoặc ở dây cụ thể hơn là khi sử dụng mode `custom` ta nên chọn model nào để các VMs sẽ sử dụng dòng CPU tương thích với các host compute
 
 Ở đây tôi có 2 server có 2 model khác nhau: `Cascadelake-Server-noTSX` và `Cascadelake-Server`
 
