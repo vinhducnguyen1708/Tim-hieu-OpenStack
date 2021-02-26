@@ -77,3 +77,13 @@ Mỗi một khối ở hình dưới được coi như là một tài nguyên kh
 |Load distribution|Stack chạy trên 1 engine|Tài nguyên stack được phân phối chạy trên nhiều engine|
 |Concurrent Update|Không|Có|
 
+---
+## Tham khảo
+
+[1] OpenStack Orchestration By Adnan Ahmed Siddiqui October 2015
+
+[2] http://cs.utdallas.edu/wp-content/uploads/2015/09/AutoScaling.pdf
+
+[3] https://github.com/hocchudong/thuctap012017/blob/master/XuanSon/OpenStack/Heat/docs/Gioi-thieu-Heat.md
+
+[4] https://www.openstack.org/videos/summits/austin-2016/scalable-heat-engine-using-convergence
