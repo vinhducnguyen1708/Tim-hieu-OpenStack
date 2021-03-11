@@ -159,11 +159,23 @@ ip netns exec qrouter-f67139d5-c659-41f0-8c56-ebd14361f067 iptables-save
 ```
 ![Images](../images/fwaasdemo02.png)
 
+- Bước 6: Add thêm rule vào policy
+```sh
+## Add thêm rule allow icmp để máy ảo ping được cho nhau
+openstack firewall group rule create --name vinh-rule4 --protocol icmp\
+  --action allow
+## Add rule vào policy 
+openstack firewall group policy  add rule  myfirewallpolicy1 vinh-rule4
+```
+
+
 ### Kiểm tra
 
-- Kiểm tra xem máy ảo có thể ssh được cho nhau.
+- Kiểm tra xem máy ảo không thể ssh được nhưng vẫn ping được cho nhau.
 
 ![Images](../images/fwaasdemo03.png)
+
+
 
 ---
 ## Tham Khảo
