@@ -76,7 +76,7 @@ systemctl restart neutron-openvswitch-agent neutron-l3-agent neutron-server
 ### Ví dụ
 2 máy ảo ở 2 network private khác nhau, 2 network đó được kết nối với nhau bằng 1 router. Security group của 2 máy ảo đều mở port 22 để SSH. Ta sẽ thực hiện chặn port 22 trên router xem 2 máy ảo có thể SSH được không.
 
-![Images](../iamges/fwaasdemo01.png)
+![Images](../images/fwaasdemo01.png)
 
 - Bước 1: Tạo firewall rule
 ```sh
@@ -157,13 +157,13 @@ qrouter-f67139d5-c659-41f0-8c56-ebd14361f067 (id: 12)
 ###
 ip netns exec qrouter-f67139d5-c659-41f0-8c56-ebd14361f067 iptables-save
 ```
-![Images](../iamges/fwaasdemo02.png)
+![Images](../images/fwaasdemo02.png)
 
 ### Kiểm tra
 
 - Kiểm tra xem máy ảo có thể ssh được cho nhau.
 
-![Images](../iamges/fwaasdemo03.png)
+![Images](../images/fwaasdemo03.png)
 
 ---
 ## Tham Khảo
