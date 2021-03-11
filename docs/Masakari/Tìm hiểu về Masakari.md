@@ -4,12 +4,12 @@ Masakari Là dự án của Openstack được thiết kế để đảm bảo t
 
 ## 1.2 Thành phần
 
-![ima](../images/masakari-1.png)
+![ima](../../images/masakari-1.png)
 - Masakari-api: Thành phần tiếp nhận các request, chuyển thành lệnh để tương tác với masakari-engine thông qua Rabbitmq
 
 - Masakari-engine: Thực thi các quy trình khôi phục và giao tiếp với Nova
 
-![ima](../images/masakari-2.png)
+![ima](../../images/masakari-2.png)
 
 Trên các node compute sẽ là nơi chứa các service monitor, mỗi một service này sẽ giám sát một thành phần trong compute:
 

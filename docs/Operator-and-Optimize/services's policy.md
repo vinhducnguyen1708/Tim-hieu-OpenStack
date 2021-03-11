@@ -4,7 +4,7 @@
 
 Mỗi một dịch vụ Openstack như Keystone, Nova, Neutron,... đều có chính sách RBAC riêng. Cơ chế này quyết định user nào có thể truy cập các đối tượng trong mỗi service. và việc xác định đó được thông qua file policy.json của mỗi service.
 
-![ima](../images/policyfile.png)
+![ima](../../images/policyfile.png)
 
 
 Khi gọi API vào mỗi service được thiết lập, các policy engine của các service sử dụng các định nghĩa policy phù hợp để quyết định lời yêu cầu này được chấp nhận. Bất kỳ thay đổi nào ở file policy.json đều được xác nhận ngay lập tức, điều này cho phép các policy mới sẽ được thực hiện ngay cả khi service đang chạy.
@@ -104,20 +104,20 @@ Rule này quyết định ai có thể sử dụng API keystone xóa EC2 credent
 
 - Bước 1: Tạo role từ Dashboard
 
-![ima](../images/policyfile-1.png)
+![ima](../../images/policyfile-1.png)
 
 - Bước 2: Gán các role ấy cho các user trong project
 
-![ima](../images/policyfile-2.png)
+![ima](../../images/policyfile-2.png)
 
 
-![ima](../images/policyfile-3.png)
+![ima](../../images/policyfile-3.png)
 
 - Bước 3: Đăng nhập vào từng user và tạo máy ảo
 
-![ima](../images/policyfile-4.png)
+![ima](../../images/policyfile-4.png)
 
-![ima](../images/policyfile-5.png)
+![ima](../../images/policyfile-5.png)
 
 
 
@@ -153,11 +153,11 @@ Sửa thành:
 
 Đứng tại user `vinh02` thực hiện xóa và reboot vm được tạo bởi user `vinh01`
 
-![ima](../images/policyfile-6.png)
+![ima](../../images/policyfile-6.png)
 
 Chỉ có thể tương tác với các VM được tạo bởi chính mình
 
-![ima](../images/policyfile-7.png)
+![ima](../../images/policyfile-7.png)
 
 
 **Add thêm rule cho role**

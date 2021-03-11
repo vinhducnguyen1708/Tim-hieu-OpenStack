@@ -32,11 +32,11 @@ openstack image set --property hw_vif_multiqueue_enabled='true'  <id_image>
 
 - VM khi chưa phân luồng Queue:
 
-![ima](../images/multiqueue1.png)
+![ima](../../images/multiqueue1.png)
 
 - VM khi đã phân luồng Queue:
 
-![ima](../images/multiqueue2.png)
+![ima](../../images/multiqueue2.png)
 
 ## IV. Kiểm tra hiệu năng
 
@@ -56,36 +56,36 @@ apt-get -y install iperf3 nload
 ```sh
 iperf3 -s -f m -p 3000
 ```
-![ima](../images/multiqueuetest1.png)
+![ima](../../images/multiqueuetest1.png)
 
 - 4 server(outgoing) còn lại sẽ đẩy vào 4 port tương ứng ở server 1
 ví dụ:
 ```sh
 iperf3 -c 192.168.1.165 -f m -t 600 -p 3000
 ```
-![ima](../images/multiqueuetest2.png)
+![ima](../../images/multiqueuetest2.png)
 
 - Kết quả các server đẩy vào:
 
 ` inh-u20-non-multiqueue-2:`
 
-![ima](../images/multiqueuetest4.png)
+![ima](../../images/multiqueuetest4.png)
 
 `vinh-u20-non-multiqueue-3:`
 
-![ima](../images/multiqueuetest5.png)
+![ima](../../images/multiqueuetest5.png)
 
 `vinh-u20-non-multiqueue-4:`
 
-![ima](../images/multiqueuetest6.png)
+![ima](../../images/multiqueuetest6.png)
 
 `vinh-u20-non-multiqueue-5:`
 
-![ima](../images/multiqueuetest7.png)
+![ima](../../images/multiqueuetest7.png)
 
 - Kết quả nload trên `vinh-u20-non-multiqueue-1`:
 
-![ima](../images/multiqueuetest3.png)
+![ima](../../images/multiqueuetest3.png)
 
 
 ### Multiqueue
@@ -96,23 +96,23 @@ Yêu cầu và các thực hiện giống như trên
 
 `vinh-u20-multiqueue-2:`
 
-![ima](../images/multiqueuetest8.png)
+![ima](../../images/multiqueuetest8.png)
 
 `vinh-u20-multiqueue-3:`
 
-![ima](../images/multiqueuetest9.png)
+![ima](../../images/multiqueuetest9.png)
 
 `vinh-u20-multiqueue-4:`
 
-![ima](../images/multiqueuetest10.png)
+![ima](../../images/multiqueuetest10.png)
 
 `vinh-u20-multiqueue-5:`
 
-![ima](../images/multiqueuetest11.png)
+![ima](../../images/multiqueuetest11.png)
 
 - Kết quả nload trên `vinh-u20-multiqueue-1`:
 
-![ima](../images/multiqueuetest12.png)
+![ima](../../images/multiqueuetest12.png)
 
 
 ## Kết luận
@@ -122,7 +122,7 @@ Yêu cầu và các thực hiện giống như trên
 
 `Retransmitted TCP packets`
 
-![ima](../images/multiqueuetest13.png)
+![ima](../../images/multiqueuetest13.png)
 
 
 ---
