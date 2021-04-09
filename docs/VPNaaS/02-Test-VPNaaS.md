@@ -190,7 +190,7 @@ openstack vpn endpoint group create --type cidr --value 192.168.100.0/24 my-HN-p
 ```sh
 openstack vpn ipsec site connection create --vpnservice vpntoHN \
 --ikepolicy ikepolicy-for-hn --ipsecpolicy ipsecpolicy-for-hn \
---peer-address 14.225.23.38 --peer-id 14.225.23.38 \
+--peer-address 192.168.20.78 --peer-id 192.168.20.78 \
 --local-endpoint-group my-HCM-local --peer-endpoint-group my-HN-peer \
 --psk secret vpnconnectiontoHN
 ```
