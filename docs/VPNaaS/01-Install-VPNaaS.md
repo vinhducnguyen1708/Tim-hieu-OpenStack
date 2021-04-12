@@ -85,7 +85,7 @@ Việc triển khai VPNaaS của Openstack cung cấp:
 
 - Các extension tượng trưng cho các tài nguyên:
     - `services`: Parent object liên kết VPN với subnet và router được chỉ định.
-    - `ike policy`: The Internet Key Exchange (IKE) policy xác định thuật toán xác thực và mã hóa để sử dụng trong giai đoạn đàm phát 1 và 2 trước khi thiết lập kết nối VPN
+    - `ike policy`: The Internet Key Exchange (IKE) policy xác định thuật toán xác thực và mã hóa để sử dụng trong giai đoạn đàm phán 1 và 2 trước khi thiết lập kết nối VPN
     - `ipsecpolicy`: IP security policy chỉ định thuật toán xác thực mã hóa và cơ chế đóng gói packets sử dụng khi thiết lập kết nối VPN.
     - `ipsec-site-connection`: Thông tin cho kết nốt site-to-site IPsec, bao gồm: peer CIDRs, MTU, cơ chế xác thực, peer address, DPD và trạng thái.
 
