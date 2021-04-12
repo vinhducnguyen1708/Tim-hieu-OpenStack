@@ -56,7 +56,7 @@ openstack endpoint create senlin --region Hanoi \
 ```ini
 [default]
 debug = true
-transport_url = rabbit://openstack:Welcome123@192.168.10.91:5672//openstack
+transport_url = rabbit://openstack:Welcome123@192.168.10.91:5672
 [database]
 connection = mysql+pymysql://senlin:Welcome123@192.168.10.91/senlin?charset=utf8
 

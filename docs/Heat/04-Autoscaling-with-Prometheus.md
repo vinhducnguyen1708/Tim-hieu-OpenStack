@@ -528,7 +528,7 @@ EOF
 
 - Bước 5: Tạo file script thực thi khi alert gửi đến
 ```sh
-cat << EOF > /root/autoscaling.sh
+vim /root/autoscaling.sh
 #!/bin/bash
 #
 # openstack stack resource show <stack id> cirros_scaleup_policy
@@ -558,12 +558,13 @@ echo $url
 echo $token
       curl -s -H "X-Auth-Token: $token" -X POST -i -k $url
 fi
-EOF
+```
 
-
+- Bước 7: Phân quyển cho file script
+```sh
 chmod 777  /root/autoscaling.sh
 ```
-- Bước 6: Tạo thêm một phiên ssh vào controller
+- Bước 7: Tạo thêm một phiên ssh vào controller
 ```sh
 cd  prometheus-am-executor/
 
