@@ -168,3 +168,37 @@ cd octavia/diskimage-create/
 
 ![image](../../images/octavia-amphora-build-image.png)
 
+
+
+## Kiểm tra
+
+
+- Đổi tên 
+```sh
+mv amphora-x64-haproxy.qcow2 amphora-x64-haproxy-filebeat.qcow2
+```
+- Chuyển định dạng Image
+```sh
+qemu-img convert -f qcow2 -O raw  amphora-x64-haproxy-filebeat.qcow2 amphora-x64-haproxy-filebeat.raw
+```
+- upload image lên Openstack dồng thời gắn tag cho image
+```sh
+openstack image create --disk-format raw --container-format bare --private --tag amphora-filebeat --file amphora-x64-haproxy-filebeat.raw amphora-filebeatx64-haproxy
+```
+![image](../../images/octavia-amphora-build-image02.png)
+
+- Khởi tạo loadbalancer
+
+![image](../../images/octavia-amphora-build-image03.png)
+
+- Kiểm tra amphora
+
+![image](../../images/octavia-amphora-build-image04.png)
+
+
+----
+## TK
+
+[1] https://opendev.org/openstack/octavia/commit/9df9ff9137af0d4602283232dc1352cb6b43a3d1
+
+[2] https://ask.openstack.org/en/question/116606/how-to-create-an-amphora-image-for-octavia/
