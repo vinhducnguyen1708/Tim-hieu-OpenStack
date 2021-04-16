@@ -9,10 +9,10 @@ git clone https://git.openstack.org/openstack/diskimage-builder.git
 git clone https://git.openstack.org/openstack/tripleo-image-elements.git
 ```
 
-- Bước 2: Chuyển branch sang train ( Bởi vì tôi muốn sử dụng OS centos7)
+- Bước 2: Chuyển branch sang ussuri
 ```sh
 cd octavia/
-git checkout stable/train
+git checkout stable/ussuri
 ```
 
 
@@ -162,7 +162,7 @@ export DIB_INSTALLTYPE_pip_and_virtualenv=package
 - Bước 9: Thực hiện chạy lệnh build image
 ```sh
 cd octavia/diskimage-create/
-./diskimage-create.sh  -d 7 -i centos  -s3
+./diskimage-create.sh -g stable/train  -d 7 -i centos  -s3
 ```
 
 
@@ -173,7 +173,7 @@ cd octavia/diskimage-create/
 ## Kiểm tra
 
 
-- Đổi tên 
+- Đổi tên image
 ```sh
 mv amphora-x64-haproxy.qcow2 amphora-x64-haproxy-filebeat.qcow2
 ```
