@@ -191,7 +191,7 @@ openstack vpn ipsec site connection create --vpnservice vpntoHN --ikepolicy ikep
 
     ![ima](../../images/pfsense-vpn-12.png)
 
-- Sử dụng lệnh 
+- Sử dụng lệnh sau để thêm vào bảng route 
 
     ```sh
     route add 192.168.178.0 MASK 255.255.255.0 172.16.68.1

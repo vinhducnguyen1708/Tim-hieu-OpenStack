@@ -2,10 +2,68 @@
 
 Bài viết này sẽ hướng dẫn đóng Image Amphora cho project Octavia
 
+## Server DIB
+- OS: Ubuntu 18.04
+  - Ram: 2GB
+  - CPU: 2c
+  - Disk: 100Gb
+
+### Cài đặt cho Server DIB
+
+- B1: update và upgrade packages
+```sh
+apt-get -y update
+apt-get -y upgrade
+```
+
+- B2: Set hostname 
+```sh
+hostnamectl set-hostname dib-image
+```
+
+- B3: Cài đặt repo
+```sh
+sudo apt-get install software-properties-common
+sudo apt-add-repository universe
+sudo apt-get update
+sudo apt-get -y install alien
+sudo apt-get -y install yum-utils
+sudo apt-get update
+```
+
+- B4: Cài đặt các tool và gói cần thiết 
+```sh
+sudo apt-get -y install python-pip
+sudo apt-get -y install git
+```
+
+- B5: Clone repo DIB từ github
+```sh
+git clone https://github.com/openstack/diskimage-builder.git
+```
+
+- B6: Cài đặt module yêu cầu
+```sh
+cd diskimage-builder/
+
+sudo pip install -r requirements.txt
+```
+
+- B7: Cài đặt DIB
+```sh
+pip install diskimage-builder
+```
+- B8: Cài đặt các gói hỗ trợ quá trình build image
+```sh
+apt install -y qemu qemu-kvm libvirt-bin  bridge-utils  virt-manager
+apt-get install -y qemu-user-static
+apt-get -y install qemu-utils git kpartx debootstrap
+```
+
+
 - Bước 1: Clone các git repository cần thiết
 ```sh
 git clone https://github.com/stackforge/octavia.git
-git clone https://git.openstack.org/openstack/diskimage-builder.git
 git clone https://git.openstack.org/openstack/tripleo-image-elements.git
 ```
 
@@ -15,35 +73,28 @@ cd octavia/
 git checkout stable/ussuri
 ```
 
+- Bước 3: Vì Script của Octavia khi chạy không lấy elements được chỉ định theo path mà sẽ chỉ lấy elements đã được cài đặt bằng pip nên ta phải sửa đoạn script cài đặt pip cho python2
+```sh
+root@dib-image:~# vim /usr/local/lib/python2.7/dist-packages/diskimage_builder/elements/pip-and-virtualenv/source-repository-pip-and-virtualenv
 
-- Bước 3: Thêm các elements để custom cho Image nếu cần thiết. Ở đây tôi sẽ cài đặt filebeat trong Image này 
+pip-and-virtualenv file /tmp/get-pip.py https://bootstrap.pypa.io/pip/2.7/get-pip.py
+```
+
+- Bước 4: Thêm các elements để custom cho Image nếu cần thiết. Ở đây tôi sẽ cài đặt filebeat trong Image này 
 ```sh 
 mkdir -p elements/filebeat/post-install.d
 ```
 
-- Bước 4: Chỉnh sửa file script elements/filebeat/post-install.d/centos-filebeat với nội dung:
+- Bước 5: Chỉnh sửa file script elements/filebeat/post-install.d/ubuntu-filebeat với nội dung:
 ```sh
 #!/bin/bash
 
 echo "Install FileBeat"
+wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add -
+echo "deb https://artifacts.elastic.co/packages/6.x/apt stable main" | sudo tee -a /etc/apt/sources.list.d/elastic-6.x.list
+sudo apt-get update
+sudo apt-get install filebeat -y
 
-sudo rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch
-
-echo "Config filebeat repo"
-cat << EOF > /etc/yum.repos.d/filebeat.repo
-[filebeat-7.x]
-name=Filebeat repository for 7.x packages
-baseurl=https://artifacts.elastic.co/packages/7.x/yum
-gpgcheck=1
-gpgkey=https://artifacts.elastic.co/GPG-KEY-elasticsearch
-enabled=1
-autorefresh=1
-type=rpm-md
-EOF
-
-echo "Install Filebeat"
-
-yum -y install filebeat
 
 echo "Enable service filebeat"
 
@@ -77,123 +128,25 @@ processors:
   - add_kubernetes_metadata: ~
 EOF
 ```
-- Bước 5: Phân quyền cho script
+- Bước 6: Phân quyền cho script
 ```sh
-chmod +x elements/filebeat/post-install.d/centos-filebeat
+chmod +x elements/filebeat/post-install.d/ubuntu-filebeat
 ```
 
-- Bước 6: Ở phiên bản diskimage-create của Octavia này xuất hiện lỗi không cài đặt `haproxy` và module `pbr`
-
-    - Lỗi không cài HAproxy: thêm cài đặt tại file `octavia/elements/haproxy-octavia/install.d/76-haproxy`
-    ```sh
-    #!/bin/bash
-    set -eux
-    set -o pipefail
-    ## Đoạn thêm
-    if [ "$DISTRO_NAME" == "centos" ] && [ "$DIB_RELEASE" == "7" ]; then
-        yum -y install haproxy
-    fi
-    ##
-    [ -d /var/lib/haproxy ] || install -d -D -m 0755 -o root -g root /var/lib/haproxy
-    ```
-
-    - Lỗi không cài moldule `pbr`: Thêm dòng cài đặt tại file `octavia/elements/amphora-agent/install.d/amphora-agent-source-install/75-amphora-agent-install`
-    ```sh
-    #!/bin/bash
-
-    if [ ${DIB_DEBUG_TRACE:-0} -gt 0 ]; then
-        set -x
-    fi
-    set -eu
-    set -o pipefail
-
-    SCRIPTDIR=$(dirname $0)
-    AMP_VENV=/opt/amphora-agent-venv
-
-    # Create a virtual environment to contain the amphora agent
-    ${DIB_PYTHON} -m virtualenv $AMP_VENV
-
-    $AMP_VENV/bin/pip install pip --upgrade
-    ### ĐOẠN THÊM
-    $AMP_VENV/bin/pip install pbr
-    ### 
-    $AMP_VENV/bin/pip install -U -c /opt/upper-constraints.txt /opt/amphora-agent
-
-    # Link the amphora-agent out to /usr/local/bin where the startup scripts look
-    ln -s $AMP_VENV/bin/amphora-agent /usr/local/bin/amphora-agent || true
-
-    # Also link out the vrrp check script(s) so they're in PATH for keepalived
-    ln -s $AMP_VENV/bin/haproxy-vrrp-* /usr/local/bin/ || true
-
-    mkdir /etc/octavia
-    # we assume certs, etc will come in through the config drive
-    mkdir /etc/octavia/certs
-    mkdir -p /var/lib/octavia
-
-    install -D -g root -o root -m 0644 ${SCRIPTDIR}/amphora-agent.logrotate /etc/logrotate.d/amphora-agent
-
-    case "$DIB_INIT_SYSTEM" in
-        upstart)
-            install -D -g root -o root -m 0644 ${SCRIPTDIR}/amphora-agent.conf /etc/init/amphora-agent.conf
-            ;;
-        systemd)
-            install -D -g root -o root -m 0644 ${SCRIPTDIR}/amphora-agent.service /usr/lib/systemd/system/amphora-agent.service
-            ;;
-        sysv)
-            install -D -g root -o root -m 0644 ${SCRIPTDIR}/amphora-agent.init /etc/init.d/amphora-agent.init
-            ;;
-        *)
-            echo "Unsupported init system"
-            exit 1
-            ;;
-    esac
-    ```
 - Bước 7: chỉnh sửa lệnh chạy diskimage-create để khai báo thêm element `filebeat` trong file `octavia/diskimage-create/diskimage-create.sh`
 ```sh
 #...
 disk-image-create $AMP_LOGFILE $dib_trace_arg -a $AMP_ARCH -o $AMP_OUTPUTFILENAME -t $AMP_IMAGETYPE --image-size $AMP_IMAGESIZE --image-cache $AMP_CACHEDIR $AMP_DISABLE_TMP_FS $AMP_element_sequence filebeat
 #...
 ```
-- Bước 8: Khai báo cài đặt pip và virtualenv bằng package
-```sh
-export DIB_INSTALLTYPE_pip_and_virtualenv=package
-```
 
-- Bước 9: Thực hiện chạy lệnh build image
+- Bước 8: Thực hiện chạy lệnh build image
 ```sh
 cd octavia/diskimage-create/
-./diskimage-create.sh -g stable/train  -d 7 -i centos  -s3
+./diskimage-create.sh -g stable/train  -d bionic -i ubuntu 
 ```
-
-
-![image](../../images/octavia-amphora-build-image.png)
-
-
 
 ## Kiểm tra
-
-
-- Đổi tên image
-```sh
-mv amphora-x64-haproxy.qcow2 amphora-x64-haproxy-filebeat.qcow2
-```
-- Chuyển định dạng Image
-```sh
-qemu-img convert -f qcow2 -O raw  amphora-x64-haproxy-filebeat.qcow2 amphora-x64-haproxy-filebeat.raw
-```
-- upload image lên Openstack dồng thời gắn tag cho image
-```sh
-openstack image create --disk-format raw --container-format bare --private --tag amphora-filebeat --file amphora-x64-haproxy-filebeat.raw amphora-filebeatx64-haproxy
-```
-![image](../../images/octavia-amphora-build-image02.png)
-
-- Khởi tạo loadbalancer
-
-![image](../../images/octavia-amphora-build-image03.png)
-
-- Kiểm tra amphora
-
-![image](../../images/octavia-amphora-build-image04.png)
 
 
 ----
