@@ -138,10 +138,10 @@ openstack vpn ipsec site connection create --vpnservice vpntoHN --ikepolicy ikep
 | Local ID                 |                                                    |
 | MTU                      | 1500                                               |
 | Name                     | vpnconnectiontopfsense                             |
-| Peer Address             | 192.168.20.2                                     |
+| Peer Address             | 192.168.20.2                                       |
 | Peer CIDRs               |                                                    |
 | Peer Endpoint Group ID   | a480cb53-103d-41c2-bbd1-f563355e084f               |
-| Peer ID                  | 192.168.20.2                                    |
+| Peer ID                  | 192.168.20.2                                       |
 | Pre-shared Key           | secret                                             |
 | Project                  | e7b4618916794ed58226047d8ce424ea                   |
 | Route Mode               | static                                             |
@@ -157,7 +157,7 @@ openstack vpn ipsec site connection create --vpnservice vpntoHN --ikepolicy ikep
 +--------------------------------------+------------------------+----------------+--------------------------+--------+
 | ID                                   | Name                   | Peer Address   | Authentication Algorithm | Status |
 +--------------------------------------+------------------------+----------------+--------------------------+--------+
-| 330b697e-5b85-4607-b16b-1b446ed20e47 | vpnconnectiontopfsense | 192.168.20.2 | psk                      | ACTIVE |
+| 330b697e-5b85-4607-b16b-1b446ed20e47 | vpnconnectiontopfsense | 192.168.20.2 | psk                      | ACTIVE   |
 +--------------------------------------+------------------------+----------------+--------------------------+--------+
 ```
 
