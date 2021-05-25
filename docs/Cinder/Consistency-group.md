@@ -65,3 +65,13 @@ Thực hiện tạo ra volume group mới:
 
 Trong volume group này sẽ tạo ra các volume mới chứa nội dung bản snapshot
 ![ima](../../images/cinder-consistency12.png)
+
+
+---
+# TK
+
+[1] https://docs.openstack.org/cinder/latest/admin/blockstorage-consistency-groups.html#:~:text=It%20allows%20snapshots%20of%20multiple,deprecated%20since%20the%20Queens%20release
+
+[2] https://docs.openstack.org/python-openstackclient/pike/cli/command-objects/consistency-group-snapshot.html
+
+[3] https://docs.openstack.org/cinder/latest/admin/blockstorage-groups.html
