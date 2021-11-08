@@ -110,3 +110,10 @@ openstack flavor set 4C4R-GPU-passthrough --property "pci_passthrough:alias"="T4
 - **Bước 3:** Sau khi cài đặt driver NVIDIA cho máy ảo, thực hiện lệnh kiểm tra tài nguyên card GPU đã lấy đủ
 
 ![imagegpu](../../images/gpu-passthrough03.png)
+
+
+# Tham khảo
+
+- https://docs.vmware.com/en/VMware-SD-WAN/4.5/vmware-sd-wan-partner-guide/GUID-C40F11DA-0418-4EB9-B91F-E52893584983.html
+- https://documentation.suse.com/soc/9/html/suse-openstack-cloud-crowbar-all/gpu-passthrough.html
+- https://docs.openstack.org/nova/pike/admin/pci-passthrough.html
