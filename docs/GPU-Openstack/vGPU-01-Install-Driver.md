@@ -96,8 +96,7 @@ nvidia-smi
 ![imagevgpu](../../images/vgpu-driver05.png)
 
 
-
-## III. Cài đặt driver NVIDIA cho OS
+## IV. Cài đặt driver NVIDIA cho Hypervisor KVM
 
 - **Bước 1:** Enable SR-IOV bằng bổ sung option dưới đây trong grub
 ```sh
