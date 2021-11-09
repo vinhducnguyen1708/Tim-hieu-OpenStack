@@ -189,3 +189,12 @@ GPU 00000000:AF:00.0
     GRID T4-4C
     GRID T4-8C
 ```
+
+---
+# Tham Khảo
+- https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html#runfile-nouveau
+- https://docs.nvidia.com/grid/latest/grid-vgpu-user-guide/#get-summary-all-gpus-nvidia-smi
+- https://docs.vmware.com/en/VMware-SD-WAN/4.5/vmware-sd-wan-partner-guide/GUID-C40F11DA-0418-4EB9-B91F-E52893584983.html
+- https://docs.nvidia.com/grid/8.0/grid-software-quick-start-guide/index.html
+- https://documentation.suse.com/sles/15-SP3/single-html/SLES-nvidia-vgpu/
+- https://forums.developer.nvidia.com/t/418-92-vgpu-vfio-module-not-loading/162952
