@@ -260,7 +260,7 @@ source /etc/kolla/admin-openrc.sh
 openstack token issue
 ```
 
-## 7. Cách thức kiểm tra và thao tác với các proccess trong Kolla
+## 7. Cách thức kiểm tra và thao tác trong Openstack Kolla
 
 ### 7.1 Làm thể nào để tương tác với các container?
 - Hiển thị các container đã tạo trên `kolla-controller`:
@@ -293,16 +293,23 @@ docker exec -it mariadb mysql -uroot -prbDiXql1qtz2jVfLTqHxWFFAxxBbEpXWpYp55GEk 
 docker exec -it mariadb mysqldump -uroot -prbDiXql1qtz2jVfLTqHxWFFAxxBbEpXWpYp55GEk keystone > vinhtestdumpDB.sql
 ```
 ### 7.2 Dự liệu được ghi ở đâu?
-*Dữ liệu ghi ra từ container được mount ra ngoài filesystem của OS, để biết thông tin volume mount của container, sử dụng lệnh:*
+*Dữ liệu ghi ra từ container được mount ra ngoài filesystem của OS*
+- Để biết thông tin volume mount của container, sử dụng lệnh:
+
 ```sh
 docker inspect glance_api
 ```
+
 ![topology](ima/kolla-multinode-ubuntu05.png)
+
 *Kiểm tra trường `Mounts` của output json*
 
-    - Thư mục lưu log: `/var/lib/docker/volumes/kolla_logs/_data`
-    - Thư mục lưu dữ liệu: `/var/lib/docker/volumes/glance/_data`
-    - Thư mục lưu cấu hình: `/etc/kolla/glance-api`
+
+Thư mục lưu log: `/var/lib/docker/volumes/kolla_logs/_data`
+    
+Thư mục lưu dữ liệu: `/var/lib/docker/volumes/glance/_data`
+    
+Thư mục lưu cấu hình: `/etc/kolla/glance-api`
 
 - Tương tự với mariaDB ta sẽ thấy được thư mục lưu dữ liệu database
 ```sh
@@ -343,6 +350,81 @@ drwx------  2 42434 42434      4096 Feb 21 16:20 placement/
 ```
 
 ### 7.3 Sửa file cấu hình cho service như thế nào?
-Bình thường ta sẽ phải sửa cấu hình trong playbook rồi chạy lại.
+Các task cấu hình cho service có dạng:
+```yml
+- name: Copying over galera.cnf
+  vars:
+    service_name: "mariadb"
+    service: "{{ mariadb_services[service_name] }}"
+  merge_configs:
+    sources:
+      - "{{ role_path }}/templates/galera.cnf.j2"
+      - "{{ node_custom_config }}/galera.cnf"
+      - "{{ node_custom_config }}/mariadb/{{ inventory_hostname }}/galera.cnf"
+    dest: "{{ node_config_directory }}/{{ service_name }}/galera.cnf"
+    mode: "0660"
+  become: true
+  when:
+    - inventory_hostname in groups[service.group]
+    - service.enabled | bool
+  notify:
+    - restart mariadb
+    
+### Hoặc###
 
-Nhưng nếu ta muốn cấu hình tĩnh thì sửa tại `/etc/kolla/glance-api/glance-api.conf` sau đó `restart lại container`.
+- name: Copying over cinder.conf
+  vars:
+    service_name: "{{ item.key }}"
+  merge_configs:
+    sources:
+      - "{{ role_path }}/templates/cinder.conf.j2"
+      - "{{ node_custom_config }}/global.conf"
+      - "{{ node_custom_config }}/cinder.conf"
+      - "{{ node_custom_config }}/cinder/{{ item.key }}.conf"
+      - "{{ node_custom_config }}/cinder/{{ inventory_hostname }}/cinder.conf"
+    dest: "{{ node_config_directory }}/{{ item.key }}/cinder.conf"
+    mode: "0660"
+  become: true
+  when:
+    - item.value.enabled | bool
+    - inventory_hostname in groups[item.value.group]
+  with_dict: "{{ cinder_services }}"
+  notify:
+    - "Restart {{ item.key }} container"
+```
+Ta sẽ để ý vào thứ tự của  parameter `source`: Các dòng được liệt kê theo thứ tự override (dưới đè trên).
+
+Giá trị mặc định của các biến trên:
+```yml
+node_custom_config: "{{ node_config }}/config"
+node_config: "{{ CONFIG_DIR | default('/etc/kolla') }}" ## Mặc định là /etc/kolla
+```
+
+#### 7.3.1 Sửa cấu hình thông qua templates trong role
+Bình thường ta sẽ phải sửa cấu hình trong role của playbook rồi chạy lại.
+
+Đường dẫn template tại (ví dụ) `/usr/local/share/kolla-ansible/ansible/roles/mariadb/templates/galera.cnf.j2`
+
+#### 7.3.2 Cấu hình trong thư mục /etc/kolla/config
+
+Cấu hình tại đường dẫn `/etc/kolla/config` (đường dẫn này không có sẵn nên cần tạo)
+Trong thư mục này tạo các file cấu hình **hoàn chỉnh**, để chỉ định cho từng host thì tạo thêm đường dẫn `/etc/kolla/config/<role_name>/<inventory_hostname>/galera/cnf.j2`
+
+
+Sau đó chạy lại lệnh `kolla-ansible -i multinode reconfigure -t <role_tag>`
+
+### 7.4 Vì sao chạy lại deploy có các task vẫn change dù không thay đổi gì
+
+Khi chạy lại lệnh `kolla-ansible -i multinode deploy` ta sẽ vẫn thấy có các task chạy trả về trạng thái `changed`
+- Task `Running ... bootstrap container`: Khởi tạo một container `<service>_bootstrap` để check hoạt động của các container chính.
+- Task `Run key distribution`: Copy ssh-key cho user keystone sang các node controller
+- Task `Creating admin project, user, role, service, and endpoint`: Khởi tạo user, role, service, endpoint cho admin (nếu bạn đổi password admin mà không cập nhật lại vào file passwords.yml thì khi chạy task này sẽ thiết lập lại password cho admin dựa trên file passwords.yml).
+- Task `Enable log_bin_trust_function_creators function`: Loại bỏ log Warning của MySQL khi khởi tạo function
+- Task `Disable log_bin_trust_function_creators function`: Thiết lập log_bin_trust_function_creators có giá trị 0 để disable
+- Task `Set system-id`: Thiết lập ovs_system_id cho container openvswitch_db dựa trên `ansible_facts.hostname`(hostname của host)
+- Task `Refresh cell cache in nova scheduler`:
+Task này sẽ thực thi kill một process, nên ta sẽ lấy id của process đó kiểm tra: 
+![task_find](ima/kolla-multinode-ubuntu06.png)
+Tìm id của process sẽ bị kill:
+![process](ima/kolla-multinode-ubuntu07.png)
+Từ đó ta thấy kolla Ansible sẽ kill process nova-scheduler để reset cache mỗi lần nova được add cell.

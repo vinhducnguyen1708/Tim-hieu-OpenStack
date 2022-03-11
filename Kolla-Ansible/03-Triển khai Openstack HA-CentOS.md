@@ -255,10 +255,6 @@ EOF
 hostnamectl set-hostname compute2
 
 
-
-
-
-
 cat << EOF > /etc/sysconfig/network-scripts/ifcfg-eth0
 TYPE=Ethernet
 BOOTPROTO=static
