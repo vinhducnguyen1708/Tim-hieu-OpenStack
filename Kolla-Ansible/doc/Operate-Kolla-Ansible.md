@@ -7,7 +7,7 @@
 ```sh
 docker ps -a
 ```
-![topology](ima/kolla-multinode-ubuntu02.png)
+![topology](../ima/kolla-multinode-ubuntu02.png)
 
 Đây là tất cả các container đã được triển khai cho hệ thống Openstack. Các container này được cấu hình `mode network host`, và được mount thư mục như `/var/lib, /var/log/,..` ra ngoài.
 
@@ -15,7 +15,7 @@ docker ps -a
 ```sh
 docker exec -it openvswitch_db ovs-vsctl show
 ```
-![topology](ima/kolla-multinode-ubuntu03.png)
+![topology](../ima/kolla-multinode-ubuntu03.png)
 
 *Sau khi thực thi lệnh, kết quả trả về là thông tin kết nối trong Openvswitch (có thể thấy eth2 đã được cắm vào bridge br-ex để làm đường kết nối ra ngoài cho các VM).*
 
@@ -25,7 +25,7 @@ docker exec -it openvswitch_db ovs-vsctl show
 docker exec -it mariadb mysql -uroot -prbDiXql1qtz2jVfLTqHxWFFAxxBbEpXWpYp55GEk -e'show databases'
 ```
 
-![topology](ima/kolla-multinode-ubuntu04.png)
+![topology](../ima/kolla-multinode-ubuntu04.png)
 
 *Password của database là giá trị của biến `database_password` trong file `/etc/kolla/passwords.yml`*
 - Dump dữ liệu DB ra ngoài filesystem:
@@ -40,7 +40,7 @@ docker exec -it mariadb mysqldump -uroot -prbDiXql1qtz2jVfLTqHxWFFAxxBbEpXWpYp55
 docker inspect glance_api
 ```
 
-![topology](ima/kolla-multinode-ubuntu05.png)
+![topology](../ima/kolla-multinode-ubuntu05.png)
 
 *Kiểm tra trường `Mounts` của output json*
 
@@ -164,7 +164,7 @@ Khi chạy lại lệnh `kolla-ansible -i multinode deploy` ta sẽ vẫn thấy
 - Task `Set system-id`: Thiết lập ovs_system_id cho container openvswitch_db dựa trên `ansible_facts.hostname`(hostname của host)
 - Task `Refresh cell cache in nova scheduler`:
 Task này sẽ thực thi kill một process, nên ta sẽ lấy id của process đó kiểm tra: 
-![task_find](ima/kolla-multinode-ubuntu06.png)
+![task_find](../ima/kolla-multinode-ubuntu06.png)
 Tìm id của process sẽ bị kill:
-![process](ima/kolla-multinode-ubuntu07.png)
+![process](../ima/kolla-multinode-ubuntu07.png)
 Từ đó ta thấy kolla Ansible sẽ kill process nova-scheduler để reset cache mỗi lần nova được add cell.
