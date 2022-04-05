@@ -165,6 +165,7 @@ Khi chạy lại lệnh `kolla-ansible -i multinode deploy` ta sẽ vẫn thấy
 - Task `Refresh cell cache in nova scheduler`:
 Task này sẽ thực thi kill một process, nên ta sẽ lấy id của process đó kiểm tra: 
 ![task_find](../ima/kolla-multinode-ubuntu06.png)
+
 Tìm id của process sẽ bị kill:
 ![process](../ima/kolla-multinode-ubuntu07.png)
 Từ đó ta thấy kolla Ansible sẽ kill process nova-scheduler để reset cache mỗi lần nova được add cell.

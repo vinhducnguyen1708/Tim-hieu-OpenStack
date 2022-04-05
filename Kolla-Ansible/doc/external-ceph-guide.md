@@ -96,12 +96,32 @@ skip_cinder_backend_check: False
 cinder_enabled_backends: "{{ cinder_backends | selectattr('enabled', 'equalto', true) | list }}"
 ```
 
+- Trong file `/usr/local/share/kolla-ansible/ansible/roles/cinder/templates/cinder.conf.j2`
+```ini
+{% if cinder_backend_ceph | bool %}
+{% for backend in ceph_backend %}
+[{{ backend.name }}]
+volume_driver = cinder.volume.drivers.rbd.RBDDriver
+volume_backend_name = {{ backend.name }}
+rbd_pool = {{ backend.pool }}
+rbd_ceph_conf = /etc/ceph/ceph.conf
+rbd_flatten_volume_from_snapshot = false
+rbd_max_clone_depth = 5
+rbd_store_chunk_size = 4
+rados_connect_timeout = 5
+rbd_user = {{ ceph_cinder_user }}
+rbd_secret_uuid = {{ cinder_rbd_secret_uuid }}
+report_discard_supported = True
+image_upload_use_cinder_backend = True
+{% endfor %}
+{% endif %}
+```
 
 ## Glance
 
 1. Bổ sung biến sau để enable cấu hình glance sử dụng ceph backend trong file `/etc/kolla/globals.yml`:
 ```yml
-glance_backend_ceph: "yes"
+glance_backend_ceph: 'yes'
 glance_backend_file: 'yes'
 ```
 2. Bổ sung biến sau để cấu hình glance tìm image thông qua url rbd trong file `/usr/local/share/kolla-ansible/ansible/roles/glance/templates/glance-api.conf.j2`
