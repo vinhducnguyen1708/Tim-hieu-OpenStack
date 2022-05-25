@@ -59,7 +59,7 @@ mkdir -p /etc/kolla/config/cinder/cinder-backup
 
 cp /etc/ceph/ceph.client.cinder.keyring /etc/kolla/config/cinder/cinder-volume/
 cp /etc/ceph/ceph.client.cinder-backup.keyring /etc/kolla/config/cinder/cinder-backup/
-cp /etc/ceph.client.cinder.keyring /etc/kolla/config/cinder/cinder-backup/
+cp /etc/ceph/ceph.client.cinder.keyring /etc/kolla/config/cinder/cinder-backup/
 ```
 ### Cinder multi backend
 
