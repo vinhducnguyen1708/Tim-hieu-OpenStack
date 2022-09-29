@@ -48,6 +48,7 @@ octavia_amp_ssh_key_name: octavia
 octavia_amp_secgroup_list: 050ba612-3523-4088-91d6-d31a13c4d19b
 ### Khai báo flavor id sẽ sử dụng cho amphora
 octavia_amp_flavor_id: 200
+octavia_ca_password: Welcome123
 ```
 
 ## Chỉnh sửa template cấu hình
@@ -214,12 +215,17 @@ endpoint_type = internal
 ca_certificates_file = {{ openstack_cacert }}
 
 [cinder]
-region_name = RegionOne
+region_name = {{ openstack_region_name }}
 endpoint_type = internal
 volume_size = 6
 volume_type = ceph_hdd
 ca_certificates_file = {{ openstack_cacert }}
 
+```
+
+Chỉnh sửa mật khẩu ca cert tại file `/etc/kolla/passwords.yml`:
+```yml
+octavia_ca_password: <passpharse>
 ```
 ## Triển khai
 - Thực hiện chạy lệnh sau để triển khai

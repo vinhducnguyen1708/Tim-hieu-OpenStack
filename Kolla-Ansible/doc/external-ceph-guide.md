@@ -54,9 +54,11 @@ ceph_nova_user: "cinder"
 
 5. Tạo thư mục cấu hình cho các service và copy cert vào thư mục đó
 ```sh
+mkdir -p /etc/kolla/config/cinder
 mkdir -p /etc/kolla/config/cinder/cinder-volume
 mkdir -p /etc/kolla/config/cinder/cinder-backup
 
+cp /etc/ceph/ceph.conf /etc/kolla/config/cinder/
 cp /etc/ceph/ceph.client.cinder.keyring /etc/kolla/config/cinder/cinder-volume/
 cp /etc/ceph/ceph.client.cinder-backup.keyring /etc/kolla/config/cinder/cinder-backup/
 cp /etc/ceph/ceph.client.cinder.keyring /etc/kolla/config/cinder/cinder-backup/
@@ -131,6 +133,11 @@ show_multiple_locations = True
 show_image_direct_url = True
 {% endif %}
 ```
+3. Sao chép keyring và cấu hình ceph cho container glance
+```sh
+mkdir -p /etc/kolla/config/glance/
+cp  /etc/ceph/* /etc/kolla/config/glance/
+```
 
 ## Nova
 1. Bổ sung biến sau để enable cấu hình nova sử dụng ceph backend trong file `/etc/kolla/globals.yml`:
@@ -154,4 +161,8 @@ hw_disk_discard = {{ nova_hw_disk_discard }}
 rbd_secret_uuid = {{ rbd_secret_uuid }}
 {% endif %}
 ```
-
+3. Sao chép keyring và tệp cấu hình ceph sang nova
+```sh
+mkdir -p /etc/kolla/config/nova
+cp /etc/ceph/* /etc/kolla/config/nova/
+```
