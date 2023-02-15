@@ -7,7 +7,7 @@
 ### 1.1 Khởi tạo Keyring cho client Manila
 - Sử dụng lệnh sau để khởi tạo keyring:
 ```sh
-ceph auth add client.manila mgr 'allow *' mds 'allow *' mon 'allow *' osd 'allow *' -o /etc/ceph/ceph.client.manila.keyring
+ceph auth add client.manila mgr 'allow *' mds 'allow *' mon 'allow *' osd 'allow rwx pool=cephfs_data, allow rwx pool=cephfs_metadata, profile rbd pool=volumes_hdd, profile rbd pool=volumes_ssd, profile rbd pool=images, profile rbd pool=backups_baas' -o /etc/ceph/ceph.client.manila.keyring
 ```
 
 - Sử dụng lệnh sau để hiển thị các client:
@@ -50,7 +50,7 @@ ceph osd pool create cephfs.cephfs.data <pg_num> <pgp_num> replicated ceph_hdd <
 
 - Khởi tạo CephFS storage:
 ```sh
-ceph fs volume create cephfs
+ceph fs new cephfs cephfs_metadata  cephfs_data
 ```
 
 - Kích hoạt module Ceph Manager NFS
@@ -169,11 +169,11 @@ openstack share type list
 openstack share create --share-type cephfstype  --name cephnfsshare1  nfs 10
 ```
 
-![share](../ima/manila-kq01.png)
+![share](images/manila-kq01.png)
 
 Khi tạo share thành công. Sang giao diện ceph ta sẽ thấy thư mục đã được tạo và được thiết lập quota tại cephfs
 
-![share](../ima/manila-kq02.png)
+![share](images/manila-kq02.png)
 
 
 - Trao quyền access từ IP chỉ định
@@ -182,7 +182,7 @@ openstack share access create  cephnfsshare1 ip 192.168.30.55
 ```
 Sau khi hoàn thành bước này thì mới tạo export NFS và thiết lập client nào có thể truy cập được.
 
-![share](../ima/manila-kq03.png)
+![share](images/manila-kq03.png)
 
 
 - Hiển thị access list của share
