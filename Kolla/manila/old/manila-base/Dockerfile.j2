@@ -57,15 +57,11 @@ RUN ln -s manila-base-source/* manila \
 
 {% endif %}
 
-COPY cephfsadm/driver.py /manila-base-source/manila-13.0.4.dev16/manila/share/drivers/cephfs/driver.py
-COPY cephfsadm/driver.py /var/lib/kolla/venv/lib/python3.8/site-packages/manila/share/drivers/cephfs/driver.py
-COPY cephfsadm/utils.py  /manila-base-source/manila-13.0.4.dev16/manila/share/drivers/ganesha/utils.py
-COPY cephfsadm/utils.py  /var/lib/kolla/venv/lib/python3.8/site-packages/manila/share/drivers/ganesha/utils.py
+COPY cephfs-driver.py /manila-base-source/manila-13.0.4.dev14/manila/share/drivers/cephfs/driver.py
+COPY cephfs-driver.py /var/lib/kolla/venv/lib/python3.8/site-packages/manila/share/drivers/cephfs/driver.py
 
-COPY generic/service_instance.py /manila-base-source/manila-13.0.4.dev16/manila/share/drivers/service_instance.py
-COPY generic/service_instance.py /var/lib/kolla/venv/lib/python3.8/site-packages/manila/share/drivers/service_instance.py
-COPY generic/nova.py /manila-base-source/manila-13.0.4.dev16/manila/compute/nova.py
-COPY generic/nova.py /var/lib/kolla/venv/lib/python3.8/site-packages/manila/compute/nova.py 
+COPY ganesha-utils.py  /manila-base-source/manila-13.0.4.dev14/manila/share/drivers/ganesha/utils.py
+COPY ganesha-utils.py  /var/lib/kolla/venv/lib/python3.8/site-packages/manila/share/drivers/ganesha/utils.py
 
 COPY extend_start.sh /usr/local/bin/kolla_extend_start
 COPY manila_sudoers /etc/sudoers.d/kolla_manila_sudoers
